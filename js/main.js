@@ -9,7 +9,7 @@ require(["js/vector"], function(vector) {
         windowHalfX = window.innerWidth / 2,
         windowHalfY = window.innerHeight / 2;
 
-    var LORENZ_POS_INITIAL = new Vector(10, 1, 10),
+    var LORENZ_POS_INITIAL = new Vector(rand(10), rand(10), rand(10)),
         LORENZ_SIGMA = 10,
         LORENZ_RHO = 28,
         LORENZ_BETA = 8 / 3;
@@ -38,7 +38,7 @@ require(["js/vector"], function(vector) {
         camera = new THREE.PerspectiveCamera(50, WIDTH/HEIGHT, 0.1, 1000);
         camera.position.set(0, 0, 200);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
-        camera.setLens(80);
+        camera.setLens(70); // set focal length
 
         // Configure renderer
         renderer = new THREE.WebGLRenderer({antialias:true});
@@ -83,6 +83,10 @@ require(["js/vector"], function(vector) {
         camera.lookAt( scene.position );
 
         renderer.render(scene, camera);
+    }
+
+    function rand(n) {
+        return Math.floor(Math.random() * n) + 1;
     }
 
     function colorScale(n) {
