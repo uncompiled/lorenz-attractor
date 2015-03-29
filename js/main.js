@@ -9,6 +9,9 @@ require(["js/vector"], function(vector) {
         windowHalfX = window.innerWidth / 2,
         windowHalfY = window.innerHeight / 2;
 
+    var cameraSpinning = false,
+        cameraSpeed = 0.05;
+
     var LORENZ_POS_INITIAL = new Vector(rand(10), rand(10), rand(10)),
         LORENZ_SIGMA = 10,
         LORENZ_RHO = 28,
@@ -68,21 +71,55 @@ require(["js/vector"], function(vector) {
         pos = pos.rk4(0.01, nextPoint);
 
         var geo = new THREE.Geometry();
+        geo.vertices.push(new THREE.Vector3(oldPos.x, oldPos.y, oldPos.z));
+        geo.vertices.push(new THREE.Vector3(pos.x, pos.y, pos.z));
+
         var col = new THREE.Color(colorScale(pos.x), colorScale(pos.y), colorScale(pos.z));
         material.color = col;
 
         var line = new THREE.Line(geo, material);
-        geo.vertices.push(new THREE.Vector3(oldPos.x, oldPos.y, oldPos.z));
-        geo.vertices.push(new THREE.Vector3(pos.x, pos.y, pos.z));
-        scene.add(line);
+        scene.add(line); 
 
-        // Spin camera around the visualization
-        var timer = new Date().getTime() * 0.0005; 
-        camera.position.x = Math.floor(Math.cos( timer ) * 200);
-        camera.position.z = Math.floor(Math.sin( timer ) * 200);
-        camera.lookAt( scene.position );
+        if (cameraSpinning) {
+            // Spin camera around the visualization
+            var timer = new Date().getTime() * 0.0005; 
+            camera.position.x = Math.floor(Math.cos( timer ) * 200);
+            camera.position.z = Math.floor(Math.sin( timer ) * 200);
+            camera.lookAt( scene.position );
+        }      
 
         renderer.render(scene, camera);
+    }
+
+    function rotateCamera() {
+
+        if (event.keyCode == 37) {
+            // Left key
+            rotate("left");
+        } else if (event.keyCode == 39) { 
+            // Right key
+            rotate("right");
+        } else {
+            // Any other key toggles auto-spinning
+            setCameraMode();
+        }
+        
+        camera.lookAt(scene.position);
+    }
+
+    function rotate(direction) {
+        var x = camera.position.x,
+            y = camera.position.y,
+            z = camera.position.z;
+
+        if (direction == "left") {
+            camera.position.x = x * Math.cos(cameraSpeed) + z * Math.sin(cameraSpeed);
+            camera.position.z = z * Math.cos(cameraSpeed) - x * Math.sin(cameraSpeed);
+        } else if (direction == "right") {
+            camera.position.x = x * Math.cos(cameraSpeed) - z * Math.sin(cameraSpeed);
+            camera.position.z = z * Math.cos(cameraSpeed) + x * Math.sin(cameraSpeed);
+        }
+
     }
 
     function rand(n) {
@@ -93,6 +130,12 @@ require(["js/vector"], function(vector) {
         // Cheesy math to change the material color
         return Math.abs(n)/40;
     }
+
+    function setCameraMode() {
+        return (cameraSpinning = !cameraSpinning); 
+    }
+
+    document.addEventListener("keydown", rotateCamera, false);
 
 });
 
