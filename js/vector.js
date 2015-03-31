@@ -27,5 +27,8 @@ Vector.prototype = {
             k3 = fn(this.add(k2.scale(0.5))).scale(h),
             k4 = fn(this.add(k3)).scale(h);
         return this.add((k1.add(k2.scale(2)).add(k3.scale(2)).add(k4)).scale(1 / 6));
+    },
+    toString: function () {
+        return "(" + this.x + ", " + this.y + ", " + this.z + ")";
     }
 };

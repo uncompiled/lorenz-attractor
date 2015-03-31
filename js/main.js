@@ -9,16 +9,18 @@ require(["js/vector"], function(vector) {
         windowHalfX = window.innerWidth / 2,
         windowHalfY = window.innerHeight / 2;
 
-    var cameraSpinning = false,
+    var cameraSpinning = true,
         cameraSpeed = 0.05;
 
     var LORENZ_POS_INITIAL = new Vector(rand(10), rand(10), rand(10)),
         LORENZ_SIGMA = 10,
         LORENZ_RHO = 28,
-        LORENZ_BETA = 8 / 3;
+        LORENZ_BETA = 8 / 3,
+        LORENZ_DELTA = 0.01;
 
     var pos = LORENZ_POS_INITIAL,
-        oldPos = pos;
+        oldPos = pos,
+        elapsedTime = 0;
 
     var lorenzSystem = function (pos, sigma, rho, beta) {
         var x = sigma * (pos.y - pos.x),
@@ -31,10 +33,11 @@ require(["js/vector"], function(vector) {
         return lorenzSystem(x, LORENZ_SIGMA, LORENZ_RHO, LORENZ_BETA);
     };
 
-    initialize();
-    render();
+    initializeLegend();
+    initializeCamera();
+    renderScene();
 
-    function initialize() {
+    function initializeCamera() {
         scene = new THREE.Scene();
 
         // Configure camera settings
@@ -63,12 +66,13 @@ require(["js/vector"], function(vector) {
         renderer.render(scene, camera);
     }
 
-    function render() {
-        requestAnimationFrame(render);
+    function renderScene() {
+        requestAnimationFrame(renderScene);
 
         oldPos = pos;
         // Vector.rk4 uses Runge-Kutta method
-        pos = pos.rk4(0.01, nextPoint);
+        pos = pos.rk4(LORENZ_DELTA, nextPoint);
+        elapsedTime += LORENZ_DELTA;
 
         var geo = new THREE.Geometry();
         geo.vertices.push(new THREE.Vector3(oldPos.x, oldPos.y, oldPos.z));
@@ -88,6 +92,7 @@ require(["js/vector"], function(vector) {
             camera.lookAt( scene.position );
         }      
 
+        updateLegend();
         renderer.render(scene, camera);
     }
 
@@ -119,6 +124,27 @@ require(["js/vector"], function(vector) {
             camera.position.x = x * Math.cos(cameraSpeed) - z * Math.sin(cameraSpeed);
             camera.position.z = z * Math.cos(cameraSpeed) + x * Math.sin(cameraSpeed);
         }
+
+    }
+
+    function initializeLegend() {
+        // Display initial value in the legend
+        var initialValue = document.getElementById("initialValue");
+        initialValue.innerText = LORENZ_POS_INITIAL;
+
+        var s = document.getElementById("sigma");
+        var r = document.getElementById("rho");
+        var b = document.getElementById("beta");
+
+        s.innerText = LORENZ_SIGMA.toFixed(2);
+        r.innerText = LORENZ_RHO.toFixed(2);
+        b.innerText = LORENZ_BETA.toFixed(2);
+    }
+
+    function updateLegend() {
+        // Updates the elapsed time
+        var time = document.getElementById("time");
+        time.innerText = elapsedTime.toFixed(2);
 
     }
 

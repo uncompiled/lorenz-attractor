@@ -3,10 +3,25 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
         <title>Lorenz Attractor</title>
+        <link rel="stylesheet" type="text/css" href="css/main.css">
         <script type='text/javascript' src='js/require.js'></script>
 		<script type='text/javascript' src='js/three.js'></script>
     </head>
     <body>
+        <div id="legend">
+    		<h1>Lorenz Attractor</h1>
+    		<div id="instructions">
+    			<b>left/right</b> key to rotate<br>
+    			any other key to toggle rotation
+    		</div>
+    		<p>initial value: <span id="initialValue"></span></p>
+    		<p id="variables">
+    			sigma: <span id="sigma"></span><br>
+    			rho: <span id="rho"></span><br>
+    			beta: <span id="beta"></span>
+    		</p>
+    		<p>elapsed time: <span id="time"></span></p>
+    	</div>
         <script type='text/javascript' src='js/main.js'></script>
     </body>
 </html>
