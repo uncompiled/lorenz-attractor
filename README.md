@@ -14,7 +14,7 @@ dz/dt = xy - beta*z
 ```
 Of note, Lorenz found that the system exhibited chaotic behavior when **sigma=10**, **rho=28**, and **beta=8/3**, so this uses Three.js to model a solution for this system.
 
-{% highlight javascript %}
+```javascript
 var lorenzSystem = function (pos, sigma, rho, beta) {
     var x = sigma * (pos.y - pos.x),
         y = pos.x * (rho - pos.z) - pos.y,
@@ -22,6 +22,6 @@ var lorenzSystem = function (pos, sigma, rho, beta) {
     // Returns cartesian coordinates for lorenz system at a point in time
     return new Vector(x, y, z);
 };
-{% endhighlight %}
+```
 
 When rho is >= 1, there is a bifurcation, which appears as orbits around two equilibrium points.
